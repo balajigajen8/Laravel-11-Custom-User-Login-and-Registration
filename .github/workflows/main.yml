@@ -19,14 +19,16 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           extensions: mbstring, intl, pdo, pdo_mysql
 
       - name: Install Composer dependencies
-        run: composer install --no-dev --no-interaction --prefer-dist
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist
 
       - name: Run PHP unit tests
-        run: php artisan test
+        run: |
+          php artisan test
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,11 +48,13 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t laravel-app:latest .
-          echo "${{ secrets.AWS_ECR_URI }}/laravel-app:latest"
 
-      - name: Push Docker image to ECR
+      - name: Authenticate Docker to AWS ECR
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_URI }}
+
+      - name: Push Docker image to AWS ECR
+        run: |
           docker tag laravel-app:latest ${{ secrets.AWS_ECR_URI }}/laravel-app:latest
           docker push ${{ secrets.AWS_ECR_URI }}/laravel-app:latest
 
