@@ -41,7 +41,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Build Docker image
         run: |
@@ -50,11 +50,11 @@ jobs:
 
       - name: Push Docker image to ECR
         run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_URI }}
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_URI }}
           docker tag laravel-app:latest ${{ secrets.AWS_ECR_URI }}/laravel-app:latest
           docker push ${{ secrets.AWS_ECR_URI }}/laravel-app:latest
 
       - name: Deploy to EKS
         run: |
-          aws eks update-kubeconfig --region ap-south-1 --name laravel-cluster
+          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.EKS_CLUSTER_NAME }}
           kubectl apply -f deployment.yaml
