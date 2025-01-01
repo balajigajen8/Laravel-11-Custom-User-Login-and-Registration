@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Updated to ubuntu-24.04 (future-proof)
 
     steps:
       - name: Checkout code
@@ -35,7 +35,7 @@ jobs:
           php artisan test --env=production
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Updated to ubuntu-24.04 (future-proof)
     needs: build
 
     steps:
