@@ -30,9 +30,9 @@ jobs:
         run: |
           php artisan key:generate
 
-      - name: Run PHPUnit tests
+      - name: Run PHP unit tests
         run: |
-         ./vendor/bin/phpunit --env=testing
+          php artisan test --env=production
 
   deploy:
     runs-on: ubuntu-latest
